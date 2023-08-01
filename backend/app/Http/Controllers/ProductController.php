@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Brand;
 use PDF;
 
 class ProductController extends Controller
@@ -16,7 +17,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::join('categorys','products.brand','=','categorys.id')
-        ->select('products.id','title','brand_name as brand','category','type','seller','rating')
+        ->select('products.id','title','brand_name as brand','category','type','seller','rating','price')
         ->get();
         return response()->json(['status' => 'success','result' => $products],200);
     }
@@ -145,7 +146,6 @@ class ProductController extends Controller
     }
 
     public function search($keyword) {
-        // dd($keyword);
         try {
             $data = Product::join('categorys','products.brand','=','categorys.id')
                     ->where('title','like',"%".$keyword."%")
@@ -153,8 +153,17 @@ class ProductController extends Controller
                     ->orWhere('category','like',"%".$keyword."%")
                     ->orWhere('categorys.brand_name','like',"%".$keyword."%")
                     ->orWhere('seller','like',"%".$keyword."%")
-                    ->select('products.id','title','brand_name as brand','category','type','seller','rating')
+                    ->select('products.id','title','brand_name as brand','category','type','seller','rating','price')
                     ->get();
+            return response()->json(['status' => 'success', 'data' => $data],200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()],500);
+        }
+    }
+
+    public function getBrands() {
+        $data = Brand::select('id','name')->get();
+        try {
             return response()->json(['status' => 'success', 'data' => $data],200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()],500);
