@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Brand;
 use PDF;
 
 class ProductController extends Controller
@@ -16,10 +15,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::join('categorys','products.brand','=','categorys.id')
-        ->select('products.id','title','brand_name as brand','category','type','seller','rating','price')
+        $products = Product::join('brands','products.brand_id','=','brands.id')
+        ->join('categorys','products.category_id','=','categorys.id')
+        ->select('products.id','title','brands.name as brand','categorys.name as category','type','seller','rating','price')
         ->get();
-        return response()->json(['status' => 'success','result' => $products],200);
+        return response()->json(['status' => 'success','data' => $products],200);
     }
 
     /**
@@ -31,9 +31,9 @@ class ProductController extends Controller
     {
         $rules = [
             'title' =>  'required',
-            'brand' =>  'required',
+            'brand_id' =>  'required|integer',
             'price' =>  'required',
-            'category' =>  'required',
+            'category_id' =>  'required|integer',
             'type' =>  'required',
             'rating' =>  'required',
             'seller' =>  'required'
@@ -47,9 +47,9 @@ class ProductController extends Controller
             Product::create(
                 [
                     'title' =>  $request->title,
-                    'brand' =>  $request->brand,
+                    'brand_id' =>  $request->brand_id,
                     'type'  =>  $request->type,
-                    'category'=>$request->category,
+                    'category_id'=>$request->category_id,
                     'price' =>  $request->price,
                     'rating'=>  $request->rating,
                     'seller'=>  $request->seller
@@ -72,12 +72,12 @@ class ProductController extends Controller
         try {
             $product = Product::where('id',$id)->first();
             if ($product) {
-                return response()->json(['status' => 'success', 'result' => $product],200);
+                return response()->json(['status' => 'success', 'data' => $product],200);
             } else {
-                return response()->json(['status' => 'error', 'result' => 'product not found'],400);
+                return response()->json(['status' => 'error', 'data' => 'product not found'],400);
             }
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'result' => $e->getMessage()],500);
+            return response()->json(['status' => 'error', 'data' => $e->getMessage()],500);
         }
     }
 
@@ -92,9 +92,9 @@ class ProductController extends Controller
     {
         $rules = [
             'title' =>  'required',
-            'brand' =>  'required',
+            'brand_id' =>  'required',
             'price' =>  'required',
-            'category' =>  'required',
+            'category_id' =>  'required',
             'type' =>  'required',
             'rating' =>  'required',
             'seller' =>  'required'
@@ -108,11 +108,11 @@ class ProductController extends Controller
             $product = Product::where('id',$id)->first();
             if ($product) {
                 $product->title = $request->title;
-                $product->brand = $request->brand;
+                $product->brand_id = $request->brand_id;
                 $product->price = $request->price;
                 $product->type = $request->type;
                 $product->rating = $request->rating;
-                $product->category = $request->category;
+                $product->category_id = $request->category_id;
                 $product->seller = $request->seller;
                 $product->update();
                 return response()->json(['status' => 'success', 'message' => 'product updated successfully'],200);
@@ -147,23 +147,15 @@ class ProductController extends Controller
 
     public function search($keyword) {
         try {
-            $data = Product::join('categorys','products.brand','=','categorys.id')
+            $data = Product::join('categorys','products.category_id','=','categorys.id')
+                    ->join('brands','products.brand_id','=','brands.id')
                     ->where('title','like',"%".$keyword."%")
                     ->orWhere('type','like',"%".$keyword."%")
-                    ->orWhere('category','like',"%".$keyword."%")
-                    ->orWhere('categorys.brand_name','like',"%".$keyword."%")
+                    ->orWhere('categorys.name','like',"%".$keyword."%")
+                    ->orWhere('brands.name','like',"%".$keyword."%")
                     ->orWhere('seller','like',"%".$keyword."%")
-                    ->select('products.id','title','brand_name as brand','category','type','seller','rating','price')
+                    ->select('products.id','title','brands.name as brand','categorys.name as category','type','seller','rating','price')
                     ->get();
-            return response()->json(['status' => 'success', 'data' => $data],200);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()],500);
-        }
-    }
-
-    public function getBrands() {
-        $data = Brand::select('id','name')->get();
-        try {
             return response()->json(['status' => 'success', 'data' => $data],200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()],500);

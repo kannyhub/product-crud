@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('type');
-            $table->string('category');
-            $table->integer('price');
-            $table->integer('brand');
-            $table->integer('rating');
+            $table->integer('category_id');
+            $table->float('price');
+            $table->integer('brand_id');
+            $table->float('rating');
             $table->string('seller');
             $table->timestamps();
         });

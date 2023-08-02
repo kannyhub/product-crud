@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +21,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/products',[ProductController::class,'index']);
-Route::post('product/create',[ProductController::class,'create']);
-Route::get('/product/{id}',[ProductController::class,'getSingleProduct']);
-Route::put('product/update/{id}',[ProductController::class,'update']);
-Route::delete('product/delete/{id}',[ProductController::class,'destroy']);
-Route::get('product/search/{keyword}',[ProductController::class,'search']);
-Route::get('brands',[ProductController::class,'getBrands']);
+Route::group(['prefix' => 'product', 'as' => 'product.'],function() {
+    Route::get('/all',[ProductController::class,'index']);
+    Route::post('/create',[ProductController::class,'create']);
+    Route::get('/{id}',[ProductController::class,'getSingleProduct']);
+    Route::put('/update/{id}',[ProductController::class,'update']);
+    Route::delete('/delete/{id}',[ProductController::class,'destroy']);
+    Route::get('/search/{keyword}',[ProductController::class,'search']);
+});
+
+Route::group(['prefix' => 'brand', 'as' => 'brand.'],function() {
+    Route::get('/all',[BrandController::class,'index']);
+});
+
+Route::group(['prefix' => 'category', 'as' => 'category.'],function() {
+    Route::get('/all',[CategoryController::class,'index']);
+});

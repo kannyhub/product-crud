@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Home(props) {
   const [products,setProducts] = useState({});
   const [loading,setLoading] = useState(true);
   const getProducts = ()=>{
-    axios.get(props.API_URL+'/products')
+    axios.get(props.API_URL+'/product/all')
       .then(function (response) {
-          setProducts(response.data.result);
+          setProducts(response.data.data);
           setLoading(false)
       })
       .catch(function (error) {
@@ -23,10 +24,9 @@ export default function Home(props) {
  
   return (
     <div className="container">
-      <div className='row m-5'>
-        <div className='col d-flex justify-content-between'>
+      <div className='row my-5'>
+        <div className='col'>
           <h2>products List</h2>
-          <a href="/create" className='btn btn-primary btn-sm'>Add</a>
         </div>
       </div>
       {loading && (
@@ -63,7 +63,7 @@ export default function Home(props) {
               <td>{elem.seller}</td>
               <td>Rs {elem.price}</td>
               <td>{elem.rating}</td>
-              <td><a href="/" className='btn btn-primary btn-sm mx-1'>Edit</a><button className='btn btn-danger btn-sm mx-1'>Delete</button></td>
+              <td><Link to={'/product/'+elem.id} className='btn btn-primary btn-sm mx-1'>Edit</Link><button className='btn btn-danger btn-sm mx-1'>Delete</button></td>
             </tr>)
           })}
         </tbody>
