@@ -8,7 +8,6 @@ export default function CreateProduct(props) {
   const getCategorys = () => {
     axios.get(props.API_URL + '/category/all')
       .then(function (response) {
-        console.log(response.data)
         setCategorys(response.data.data);
       })
       .catch(function (error) {
@@ -19,7 +18,6 @@ export default function CreateProduct(props) {
   const getBrands = () => {
     axios.get(props.API_URL + '/brand/all')
       .then(function (response) {
-        console.log(response.data)
         setBrands(response.data.data);
       })
       .catch(function (error) {

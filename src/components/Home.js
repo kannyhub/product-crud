@@ -17,6 +17,22 @@ export default function Home(props) {
       });
   }
 
+  const deleteProduct = (e)=> {
+    let confirmation = window.confirm('Are you sure to delete?');
+    if (!confirmation) {
+      return false;
+    }
+    let id = e.currentTarget.getAttribute('data-id');
+    axios.delete(props.API_URL+'/product/delete/'+id)
+      .then(function (response) {
+        getProducts();
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+    
+  }
+
   useEffect(()=>{
     getProducts();
   },[]);
@@ -26,7 +42,7 @@ export default function Home(props) {
     <div className="container">
       <div className='row my-5'>
         <div className='col'>
-          <h2>products List</h2>
+          <h2>Products List</h2>
         </div>
       </div>
       {loading && (
@@ -52,18 +68,18 @@ export default function Home(props) {
           </tr>
         </thead>
         <tbody>
-          {Array.from(products).map((elem)=>{
+          {Array.from(products).map((product)=>{
             return(
-            <tr key={elem.id}>
-              <th scope="row">{elem.id}</th>
-              <td>{elem.title}</td>
-              <td>{elem.type}</td>
-              <td>{elem.category}</td>
-              <td>{elem.brand}</td>
-              <td>{elem.seller}</td>
-              <td>Rs {elem.price}</td>
-              <td>{elem.rating}</td>
-              <td><Link to={'/product/'+elem.id} className='btn btn-primary btn-sm mx-1'>Edit</Link><button className='btn btn-danger btn-sm mx-1'>Delete</button></td>
+            <tr key={product.id}>
+              <th scope="row">{product.id}</th>
+              <td>{product.title}</td>
+              <td>{product.type}</td>
+              <td>{product.category}</td>
+              <td>{product.brand}</td>
+              <td>{product.seller}</td>
+              <td>Rs {product.price}</td>
+              <td>{product.rating}</td>
+              <td><Link to={'/product/'+product.id} className='btn btn-primary btn-sm mx-1'>Edit</Link><button className='btn btn-danger btn-sm mx-1' data-id={product.id} onClick={deleteProduct}>Delete</button></td>
             </tr>)
           })}
         </tbody>
