@@ -11,41 +11,48 @@ export default function EditProduct(props) {
     const getCategorys = () => {
         axios.get(props.API_URL + '/category/all')
         .then(function (response) {
-            // console.log(response.data)
             setCategorys(response.data.data);
         })
         .catch(function (error) {
-            console.log(error);
+            alert(error);
         });
     }
 
     const getBrands = () => {
         axios.get(props.API_URL + '/brand/all')
         .then(function (response) {
-            // console.log(response.data)
             setBrands(response.data.data);
         })
         .catch(function (error) {
-            console.log(error);
+            alert(error);
         });
     }
 
     const getProduct = () => {
         axios.get(props.API_URL+'/product/'+id)
         .then(function (response) {
-            // console.log(response);
             setProduct(response.data.data);
         })
         .catch(function (error) {
-            console.log(error);
+            alert(error);
+        });
+    }
+
+    const updateProduct = (e) => {
+      e.preventDefault();
+      axios.put(props.API_URL+'/product/update/'+id,product)
+        .then(function (response) {
+           alert(response.data.message);
+        })
+        .catch(function (error) {
+            alert(error);
         });
     }
 
     const handleInputChange = (e)=> {
         const name = e.target.name;
         const value = e.target.value;
-        console.log(name,value);
-        // setProduct({...values,[name]:value})
+        setProduct(values => ({...values,[name]:value}));
     }
 
     useEffect(() => {
@@ -107,7 +114,7 @@ export default function EditProduct(props) {
             <input type="text" className="form-control" name="rating" onChange={handleInputChange} value={product.rating || ''}/>
           </div>
         </div>
-        <button className='btn btn-primary'>Save</button>
+        <button type='button' onClick={updateProduct} className='btn btn-primary'>Save</button>
       </form>
     </div>
   )

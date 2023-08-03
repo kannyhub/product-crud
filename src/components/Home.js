@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 export default function Home(props) {
   const [products,setProducts] = useState({});
   const [loading,setLoading] = useState(true);
+
   const getProducts = ()=>{
     axios.get(props.API_URL+'/product/all')
       .then(function (response) {
@@ -13,7 +14,7 @@ export default function Home(props) {
           setLoading(false)
       })
       .catch(function (error) {
-          console.log(error);
+          alert(error);
       });
   }
 
@@ -28,9 +29,23 @@ export default function Home(props) {
         getProducts();
       })
       .catch(function (error) {
-          console.log(error);
+          alert(error);
       });
-    
+  }
+
+  const searchProduct = (e) => {
+    let keyword = document.getElementById('searchInput').value;
+    if (keyword !== null && keyword !== "" && keyword.length > 0) {
+      axios.get(props.API_URL+'/product/search/'+keyword)
+      .then(function (response) {
+        setProducts(response.data.data);
+      })
+      .catch(function (error) {
+          alert(error);
+      });
+    } else {
+      getProducts();
+    }
   }
 
   useEffect(()=>{
@@ -41,8 +56,12 @@ export default function Home(props) {
   return (
     <div className="container">
       <div className='row my-5'>
-        <div className='col'>
+        <div className='col d-flex justify-content-between'>
           <h2>Products List</h2>
+          <form className="d-flex" role="search">
+            <input className="form-control me-2" type="search" placeholder="Search" onChange={searchProduct} id="searchInput" />
+          </form>
+          <Link className="btn btn-primary" aria-current="page" to="/product/add">Add Product</Link>
         </div>
       </div>
       {loading && (
