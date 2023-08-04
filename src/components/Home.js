@@ -3,12 +3,13 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Home(props) {
+export default function Home() {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [products,setProducts] = useState({});
   const [loading,setLoading] = useState(true);
 
   const getProducts = ()=>{
-    axios.get(props.API_URL+'/product/all')
+    axios.get(API_URL+'/product/all')
       .then(function (response) {
           setProducts(response.data.data);
           setLoading(false)
@@ -24,7 +25,7 @@ export default function Home(props) {
       return false;
     }
     let id = e.currentTarget.getAttribute('data-id');
-    axios.delete(props.API_URL+'/product/delete/'+id)
+    axios.delete(API_URL+'/product/delete/'+id)
       .then(function (response) {
         getProducts();
       })
@@ -36,7 +37,7 @@ export default function Home(props) {
   const searchProduct = (e) => {
     let keyword = document.getElementById('searchInput').value;
     if (keyword !== null && keyword !== "" && keyword.length > 0) {
-      axios.get(props.API_URL+'/product/search/'+keyword)
+      axios.get(API_URL+'/product/search/'+keyword)
       .then(function (response) {
         setProducts(response.data.data);
       })

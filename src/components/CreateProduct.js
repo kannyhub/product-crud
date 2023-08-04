@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
-export default function CreateProduct(props) {
+export default function CreateProduct() {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [product,setProduct] = useState({});
   const [categorys, setCategorys] = useState({});
   const [brands, setBrands] = useState({});
+  const ref = React.useRef();
 
   const getCategorys = () => {
-    axios.get(props.API_URL + '/category/all')
+    axios.get(API_URL + '/category/all')
       .then(function (response) {
         setCategorys(response.data.data);
       })
@@ -17,7 +19,7 @@ export default function CreateProduct(props) {
   }
 
   const getBrands = () => {
-    axios.get(props.API_URL + '/brand/all')
+    axios.get(API_URL + '/brand/all')
       .then(function (response) {
         setBrands(response.data.data);
       })
@@ -26,10 +28,12 @@ export default function CreateProduct(props) {
       });
   }
 
-  const addProduct = () => {
-    axios.post(props.API_URL + '/product/create',product)
+  const addProduct = (e) => {
+    e.preventDefault();
+    axios.post(API_URL + '/product/create',product)
       .then(function (response) {
         alert(response.data.message);
+        // setProduct(values => ({...values,['title']:''}));
       })
       .catch(function (error) {
         console.log(error)
@@ -52,7 +56,7 @@ export default function CreateProduct(props) {
   return (
     <div className="container my-5">
       <h2>Add Product</h2>
-      <form>
+      <form id="addProductForm" onSubmit={addProduct}>
         <div className='row my-3'>
           <div className="col-md-6">
             <label htmlFor="product_name" className="form-label">Product Name</label>
@@ -102,7 +106,7 @@ export default function CreateProduct(props) {
             <input type="text" className="form-control" name="rating" onChange={handleInputChange} value={product.rating || ''}/>
           </div>
         </div>
-        <button type="button" onClick={addProduct} className='btn btn-primary'>Save</button>
+        <button type="submit" className='btn btn-primary'>Save</button>
       </form>
     </div>
   )

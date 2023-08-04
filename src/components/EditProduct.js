@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-export default function EditProduct(props) {
+export default function EditProduct() {
+    const API_URL = process.env.REACT_APP_API_URL;
     const { id } = useParams();
     const [product,setProduct] = useState({});
     const [categorys, setCategorys] = useState({});
     const [brands, setBrands] = useState({});
 
     const getCategorys = () => {
-        axios.get(props.API_URL + '/category/all')
+        axios.get(API_URL + '/category/all')
         .then(function (response) {
             setCategorys(response.data.data);
         })
@@ -19,7 +20,7 @@ export default function EditProduct(props) {
     }
 
     const getBrands = () => {
-        axios.get(props.API_URL + '/brand/all')
+        axios.get(API_URL + '/brand/all')
         .then(function (response) {
             setBrands(response.data.data);
         })
@@ -29,7 +30,7 @@ export default function EditProduct(props) {
     }
 
     const getProduct = () => {
-        axios.get(props.API_URL+'/product/'+id)
+        axios.get(API_URL+'/product/'+id)
         .then(function (response) {
             setProduct(response.data.data);
         })
@@ -40,7 +41,7 @@ export default function EditProduct(props) {
 
     const updateProduct = (e) => {
       e.preventDefault();
-      axios.put(props.API_URL+'/product/update/'+id,product)
+      axios.put(API_URL+'/product/update/'+id,product)
         .then(function (response) {
            alert(response.data.message);
         })

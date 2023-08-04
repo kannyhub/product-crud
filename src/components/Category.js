@@ -4,12 +4,13 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
  
-export default function Category(props) {
+export default function Category() {
+    const API_URL = process.env.REACT_APP_API_URL;
     const [categorys,setCategorys] = useState({});
     const [loading,setLoading] = useState(true);
 
     const getCategorys = () => {
-        axios.get(props.API_URL+'/category/all')
+        axios.get(API_URL+'/category/all')
         .then(function (response) {
             setCategorys(response.data.data);
             setLoading(false)

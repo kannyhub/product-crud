@@ -4,12 +4,13 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Brand(props) {
+export default function Brand() {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [brands,setBrands] = useState({});
   const [loading,setLoading] = useState(true);
 
   const getBrands = () => {
-    axios.get(props.API_URL+'/brand/all')
+    axios.get(API_URL+'/brand/all')
       .then(function (response) {
         setBrands(response.data.data);
         setLoading(false)
