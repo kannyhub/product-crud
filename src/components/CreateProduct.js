@@ -6,7 +6,6 @@ export default function CreateProduct() {
   const [product,setProduct] = useState({});
   const [categorys, setCategorys] = useState({});
   const [brands, setBrands] = useState({});
-  const ref = React.useRef();
 
   const getCategorys = () => {
     axios.get(API_URL + '/category/all')
@@ -18,7 +17,7 @@ export default function CreateProduct() {
       });
   }
 
-  const getBrands = () => {
+  const getBrands = async () => {
     axios.get(API_URL + '/brand/all')
       .then(function (response) {
         setBrands(response.data.data);
